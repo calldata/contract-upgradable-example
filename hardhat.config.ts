@@ -18,6 +18,8 @@ import "hardhat-deploy-ethers";
 import "hardhat-gas-reporter";
 import "@nomiclabs/hardhat-etherscan";
 
+import "@openzeppelin/hardhat-upgrades";
+
 const chainIds = {
   ganache: 1337,
   goerli: 5,
@@ -32,16 +34,6 @@ const MNEMONIC = process.env.MNEMONIC || "";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || "";
-
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (args, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(await account.getAddress());
-  }
-});
 
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = "https://" + network + ".infura.io/v3/" + INFURA_API_KEY;
@@ -68,6 +60,12 @@ const config: HardhatUserConfig = {
         mnemonic: MNEMONIC,
       },
       chainId: chainIds.hardhat,
+    },
+    local: {
+      accounts: {
+        mnemonic: MNEMONIC
+      },
+      url: "http://127.0.0.1:8545"
     },
     mainnet: createTestnetConfig("mainnet"),
     goerli: createTestnetConfig("goerli"),
